@@ -24,6 +24,13 @@ def list_branches(gd: str) -> None:
             print(os.path.relpath(full, heads))
 
 
+def branch_head_sha(gd: str, branch: str) -> str:
+    ref_path = os.path.join(gd, "refs", "heads", branch)
+    if not os.path.isfile(ref_path):
+        raise Exception("Branch not found")
+    return open(ref_path, "r", encoding="utf-8", errors="replace").read().strip()
+
+
 def read_object(gd: str, sha: str) -> tuple[str, bytes]:
     sha = sha.strip()
     obj_path = os.path.join(gd, "objects", sha[:2], sha[2:])
@@ -34,18 +41,10 @@ def read_object(gd: str, sha: str) -> tuple[str, bytes]:
     return obj_type, body
 
 
-def branch_head_sha(gd: str, branch: str) -> str:
-    ref_path = os.path.join(gd, "refs", "heads", branch)
-    if not os.path.isfile(ref_path):
-        raise Exception("Branch not found")
-    return open(ref_path, "r", encoding="utf-8", errors="replace").read().strip()
-
-
-def print_last_commit(gd: str, branch: str) -> None:
-    head = branch_head_sha(gd, branch)
-    obj_type, body = read_object(gd, head)
+def parse_commit(gd: str, commit_sha: str) -> dict:
+    obj_type, body = read_object(gd, commit_sha)
     if obj_type != "commit":
-        raise Exception("Branch head is not a commit")
+        raise Exception("Not a commit")
 
     text = body.decode("utf-8", errors="replace")
     header, _, message = text.partition("\n\n")
@@ -69,30 +68,29 @@ def print_last_commit(gd: str, branch: str) -> None:
             end = v.find(">")
             committer = v[:end + 1].strip() if end != -1 else v.strip()
 
-    print(f"tree {tree_sha}")
-    for p in parents:
+    if tree_sha == "":
+        raise Exception("Commit has no tree")
+
+    return {
+        "sha": commit_sha,
+        "tree": tree_sha,
+        "parents": parents,
+        "author": author,
+        "committer": committer,
+        "message": message,
+    }
+
+
+def print_commit_obj(commit: dict) -> None:
+    print(f"tree {commit['tree']}")
+    for p in commit["parents"]:
         print(f"parent {p}")
-    print(f"author {author}")
-    print(f"committer {committer}")
+    print(f"author {commit['author']}")
+    print(f"committer {commit['committer']}")
     print()
-    print(message, end="")
-    if message and not message.endswith("\n"):
+    print(commit["message"], end="")
+    if commit["message"] and not commit["message"].endswith("\n"):
         print()
-
-
-def get_tree_sha_of_branch(gd: str, branch: str) -> str:
-    head = branch_head_sha(gd, branch)
-    obj_type, body = read_object(gd, head)
-    if obj_type != "commit":
-        raise Exception("Branch head is not a commit")
-
-    text = body.decode("utf-8", errors="replace")
-    for line in text.splitlines():
-        if line.startswith("tree "):
-            return line.split()[1]
-        if line == "":
-            break
-    raise Exception("Commit has no tree")
 
 
 def parse_tree(body: bytes):
@@ -102,6 +100,7 @@ def parse_tree(body: bytes):
         mode = body[i:j].decode("utf-8", errors="replace")
         k = body.find(b"\x00", j + 1)
         name = body[j + 1:k].decode("utf-8", errors="replace")
+
         sha_bytes = body[k + 1:k + 21]
         sha = sha_bytes.hex()
         i = k + 21
@@ -118,18 +117,38 @@ def print_tree(gd: str, tree_sha: str) -> None:
         print(f"{kind} {sha}    {name}")
 
 
+def print_history_trees(gd: str, head_commit_sha: str) -> None:
+    cur = head_commit_sha
+    while True:
+        c = parse_commit(gd, cur)
+        print(f"TREE for commit {cur}")
+        print_tree(gd, c["tree"])
+        if len(c["parents"]) == 0:
+            break
+        cur = c["parents"][0]
+
+
 def run(argv: list[str]) -> None:
     gd = git_dir(Path(argv[1]))
+
     if len(argv) == 2:
         list_branches(gd)
-    elif len(argv) == 3:
+        return
+
+    if len(argv) == 3:
         branch = argv[2]
-        print_last_commit(gd, branch)
+        head = branch_head_sha(gd, branch)
+
+        c = parse_commit(gd, head)
+        print_commit_obj(c)
+
         print()
-        tree_sha = get_tree_sha_of_branch(gd, branch)
-        print_tree(gd, tree_sha)
-    else:
-        raise Exception("Usage: python3 prog.py <repo> <branch>")
+        print_tree(gd, c["tree"])
+
+        print_history_trees(gd, head)
+        return
+
+    raise Exception("Usage: python3 prog.py <repo> [branch]")
 
 
 if __name__ == "__main__":
