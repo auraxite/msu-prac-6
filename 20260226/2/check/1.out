@@ -1,0 +1,27 @@
+Added monster to (1, 0) saying hello1
+Moved to (1, 0)
+ ________ 
+< hello1 >
+ -------- 
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+Moved to (0, 0)
+Moved to (0, 9)
+Added monster to (9, 9) saying hello2
+Moved to (0, 0)
+Added monster to (9, 9) saying hello3
+Replaced the old monster
+Added monster to (0, 0) saying hello4
+Added monster to (9, 0) saying hello5
+Moved to (9, 0)
+ ________ 
+< hello5 >
+ -------- 
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
