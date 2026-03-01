@@ -18,7 +18,7 @@ class Game:
         key = (x, y)
         if key in self.monsters:
             name, hello = self.monsters[key]
-            print(cowsay(hello))
+            print(cowsay(hello, cow=name))
 
     def move(self, dx: int, dy: int) -> None:
         self.player_x = self.wrap_coord(self.player_x + dx)
