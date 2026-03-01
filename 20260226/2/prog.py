@@ -1,5 +1,5 @@
 import sys
-from cowsay import cowsay
+from cowsay import cowsay, list_cows
 
 
 SIZE = 10
@@ -9,7 +9,7 @@ class Game:
     def __init__(self) -> None:
         self.player_x = 0
         self.player_y = 0
-        self.monsters = {} # (int, int) -> str
+        self.monsters = {} # (int, int) -> (str, str) name, hello
 
     def wrap_coord(self, n: int) -> int:
         return n % SIZE
@@ -17,7 +17,7 @@ class Game:
     def encounter(self, x: int, y: int) -> None:
         key = (x, y)
         if key in self.monsters:
-            hello = self.monsters[key]
+            name, hello = self.monsters[key]
             print(cowsay(hello))
 
     def move(self, dx: int, dy: int) -> None:
@@ -26,11 +26,11 @@ class Game:
         print(f"Moved to ({self.player_x}, {self.player_y})")
         self.encounter(self.player_x, self.player_y)
 
-    def addmon(self, x: int, y: int, hello: str) -> None:
+    def addmon(self, name: str, x: int, y: int, hello: str) -> None:
         key = (x, y)
         replaced = key in self.monsters
-        self.monsters[key] = hello
-        print(f"Added monster to ({x}, {y}) saying {hello}")
+        self.monsters[key] = (name, hello)
+        print(f"Added monster {name} to ({x}, {y}) saying {hello}")
         if replaced:
             print("Replaced the old monster")
 
@@ -57,13 +57,14 @@ class Game:
             return
 
         if cmd == "addmon":
-            if len(parts) != 4:
+            if len(parts) != 5:
                 print("Invalid arguments")
                 return
             try:
-                x = int(parts[1])
-                y = int(parts[2])
-                hello = parts[3]
+                name = parts[1]
+                x = int(parts[2])
+                y = int(parts[3])
+                hello = parts[4]
             except Exception:
                 print("Invalid arguments")
                 return
@@ -71,8 +72,11 @@ class Game:
             if not (0 <= x < SIZE and 0 <= y < SIZE):
                 print("Invalid arguments")
                 return
+            if name not in list_cows():
+                print("Cannot add unknown monster")
+                return
 
-            self.addmon(x, y, hello)
+            self.addmon(name, x, y, hello)
             return
 
         print("Invalid command")
