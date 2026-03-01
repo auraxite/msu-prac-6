@@ -1,27 +1,33 @@
-Added monster a to (1, 0) saying hello1
+Added monster sheep to (1, 0) saying hello1
 Moved to (1, 0)
  ________ 
 < hello1 >
  -------- 
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
+  \
+   \
+       __     
+      UooU\.'@@@@@@`.
+      \__/(@@@@@@@@@@)
+           (@@@@@@@@)
+           `YY~~~~YY'
+            ||    ||
 Moved to (0, 0)
 Moved to (0, 9)
-Added monster b to (9, 9) saying hello2
+Added monster sheep to (9, 9) saying hello2
 Moved to (0, 0)
-Added monster c to (9, 9) saying hello3
+Added monster sheep to (9, 9) saying hello3
 Replaced the old monster
-Added monster d to (0, 0) saying hello4
-Added monster e to (9, 0) saying hello5
+Added monster sheep to (0, 0) saying hello4
+Added monster sheep to (9, 0) saying hello5
 Moved to (9, 0)
  ________ 
 < hello5 >
  -------- 
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
+  \
+   \
+       __     
+      UooU\.'@@@@@@`.
+      \__/(@@@@@@@@@@)
+           (@@@@@@@@)
+           `YY~~~~YY'
+            ||    ||
