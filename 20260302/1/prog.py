@@ -93,6 +93,7 @@ class Game:
 
 
 def main() -> None:
+    print("<<< Welcome to Python-MUD 0.1 >>>")
     game = Game()
     for line in sys.stdin:
         game.process_line(line)
