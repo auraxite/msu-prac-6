@@ -1,3 +1,4 @@
+import shlex
 import sys
 from cowsay import cowsay, list_cows, read_dot_cow
 
@@ -49,7 +50,7 @@ class Game:
         if not line:
             return
 
-        parts = line.split()
+        parts = shlex.split(line)
         cmd = parts[0]
 
         if cmd in ("up", "down", "left", "right"):
