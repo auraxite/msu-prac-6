@@ -1,8 +1,12 @@
 import sys
-from cowsay import cowsay, list_cows
+from cowsay import cowsay, list_cows, read_dot_cow
 
 
 SIZE = 10
+
+
+with open("cows/jgsbat.cow", encoding="utf-8") as f:
+    JGSBAT = read_dot_cow(f)
 
 
 class Game:
@@ -16,8 +20,14 @@ class Game:
 
     def encounter(self, x: int, y: int) -> None:
         key = (x, y)
-        if key in self.monsters:
-            name, hello = self.monsters[key]
+        if key not in self.monsters:
+            return
+
+        name, hello = self.monsters[key]
+
+        if name == "jgsbat":
+            print(cowsay(hello, cowfile=JGSBAT))
+        else:
             print(cowsay(hello, cow=name))
 
     def move(self, dx: int, dy: int) -> None:
@@ -72,7 +82,7 @@ class Game:
             if not (0 <= x < SIZE and 0 <= y < SIZE):
                 print("Invalid arguments")
                 return
-            if name not in list_cows():
+            if (name not in list_cows()) and (name != "jgsbat"):
                 print("Cannot add unknown monster")
                 return
 

@@ -1,0 +1,12 @@
+$the_cow = <<EOC;
+ $thoughts
+         $thoughts ,_                    _,
+         $thoughts ) '-._  ,_    _,  _.-' (
+         $thoughts )  _.-'.|\\--//|.'-._  (
+         $thoughts  )'   .'\/o\/o\/'.   `(
+         $thoughts   ) .' . \====/ . '. (
+         $thoughts    )  / <<    >> \  (
+         $thoughts     '-._/``  ``\_.-'
+ $thoughts jgs     __\\'--'//__
+         $thoughts(((""`  `"")))
+EOC
