@@ -1,10 +1,10 @@
-addmon 1 0 hello1
+addmon sheep 1 0 hello1
 right
 left
 up
-addmon 9 9 hello2
+addmon sheep 9 9 hello2
 down
-addmon 9 9 hello3
-addmon 0 0 hello4
-addmon 9 0 hello5
+addmon sheep 9 9 hello3
+addmon sheep 0 0 hello4
+addmon sheep 9 0 hello5
 left
