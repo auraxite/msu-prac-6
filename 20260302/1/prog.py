@@ -1,20 +1,28 @@
+import io
 import shlex
 import sys
 from cowsay import cowsay, list_cows, read_dot_cow
 
 
 SIZE = 10
-
-
-with open("cows/jgsbat.cow", encoding="utf-8") as f:
-    JGSBAT = read_dot_cow(f)
+JGSBAT = read_dot_cow(io.StringIO(r"""
+    ,_                    _,
+    ) '-._  ,_    _,  _.-' (
+    )  _.-'.|\\--//|.'-._  (
+     )'   .'\/o\/o\/'.   `(
+      ) .' . \====/ . '. (
+       )  / <<    >> \  (
+        '-._/``  ``\_.-'
+  jgs     __\\'--'//__
+         (((""`  `"")))
+"""))
 
 
 class Game:
     def __init__(self) -> None:
         self.player_x = 0
         self.player_y = 0
-        self.monsters = {}  # (x, y) -> (name, hello, hp)
+        self.monsters = {}  # (x, y) -> (name, hello)
 
     def wrap_coord(self, n: int) -> int:
         return n % SIZE
@@ -22,8 +30,11 @@ class Game:
     def encounter(self, x: int, y: int) -> None:
         key = (x, y)
         if key in self.monsters:
-            name, hello, hp = self.monsters[key]
-            print(cowsay(hello, cow=name))
+            name, hello = self.monsters[key]
+            if name == "jgsbat":
+                print(cowsay(hello, cowfile=JGSBAT))
+            else:
+                print(cowsay(hello, cow=name))
 
     def move(self, dx: int, dy: int) -> None:
         self.player_x = self.wrap_coord(self.player_x + dx)
@@ -31,10 +42,10 @@ class Game:
         print(f"Moved to ({self.player_x}, {self.player_y})")
         self.encounter(self.player_x, self.player_y)
 
-    def addmon(self, name: str, hello: str, hp: int, x: int, y: int) -> None:
+    def addmon(self, name: str, hello: str, x: int, y: int) -> None:
         key = (x, y)
         replaced = key in self.monsters
-        self.monsters[key] = (name, hello, hp)
+        self.monsters[key] = (name, hello)
         print(f"Added monster {name} to ({x}, {y}) saying {hello}")
         if replaced:
             print("Replaced the old monster")
@@ -75,7 +86,7 @@ class Game:
                 return
 
             name = parts[1]
-            if name not in list_cows():
+            if (name not in list_cows()) and (name != "jgsbat"):
                 print("Cannot add unknown monster")
                 return
 
@@ -90,12 +101,6 @@ class Game:
                         params["hello"] = parts[i + 1]
                         i += 2
 
-                    elif parts[i] == "hp":
-                        if ("hp" in params) or (i + 1 >= len(parts)):
-                            raise ValueError
-                        params["hp"] = int(parts[i + 1])
-                        i += 2
-
                     elif parts[i] == "coords":
                         if ("coords" in params) or (i + 2 >= len(parts)):
                             raise ValueError
@@ -107,31 +112,27 @@ class Game:
                     else:
                         raise ValueError
 
-                if not all(k in params for k in ("hello", "hp", "coords", "x", "y")):
+                if not all(k in params for k in ("hello", "coords", "x", "y")):
                     raise ValueError
 
                 hello = params["hello"]
-                hp = params["hp"]
                 x = params["x"]
                 y = params["y"]
 
                 if not (0 <= x < SIZE and 0 <= y < SIZE):
-                    raise ValueError
-                if hp <= 0:
                     raise ValueError
 
             except ValueError:
                 print("Invalid arguments")
                 return
 
-            self.addmon(name, hello, hp, x, y)
+            self.addmon(name, hello, x, y)
             return
 
         print("Invalid command")
 
 
 def main() -> None:
-    print("<<< Welcome to Python-MUD 0.1 >>>")
     game = Game()
     for line in sys.stdin:
         game.process_line(line)
