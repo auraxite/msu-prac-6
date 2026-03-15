@@ -1,6 +1,6 @@
+import cmd
 import io
 import shlex
-import sys
 from cowsay import cowsay, list_cows, read_dot_cow
 
 
@@ -50,102 +50,111 @@ class Game:
         if replaced:
             print("Replaced the old monster")
 
-    def process_line(self, line: str) -> None:
-        line = line.strip()
-        if not line:
+
+class Shell(cmd.Cmd):
+    intro = "<<< Welcome to Python-MUD 0.1 >>>"
+    prompt = "(mud) "
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.game = Game()
+
+    def do_up(self, arg: str) -> None:
+        if arg.strip():
+            print("Invalid arguments")
+            return
+        self.game.move(0, -1)
+
+    def do_down(self, arg: str) -> None:
+        if arg.strip():
+            print("Invalid arguments")
+            return
+        self.game.move(0, 1)
+
+    def do_left(self, arg: str) -> None:
+        if arg.strip():
+            print("Invalid arguments")
+            return
+        self.game.move(-1, 0)
+
+    def do_right(self, arg: str) -> None:
+        if arg.strip():
+            print("Invalid arguments")
+            return
+        self.game.move(1, 0)
+
+    def do_addmon(self, arg: str) -> None:
+        if not arg.strip():
+            print("Invalid arguments")
             return
 
         try:
-            parts = shlex.split(line)
+            parts = shlex.split(arg)
         except ValueError:
             print("Invalid arguments")
             return
 
-        if not parts:
+        name = parts[0]
+        if (name not in list_cows()) and (name != "jgsbat"):
+            print("Cannot add unknown monster")
             return
 
-        cmd = parts[0]
+        params = {}
+        i = 1
 
-        if cmd in ("up", "down", "left", "right"):
-            if len(parts) != 1:
-                print("Invalid arguments")
-                return
-            if cmd == "up":
-                self.move(0, -1)
-            elif cmd == "down":
-                self.move(0, 1)
-            elif cmd == "left":
-                self.move(-1, 0)
-            elif cmd == "right":
-                self.move(1, 0)
-            return
-
-        if cmd == "addmon":
-            if len(parts) < 2:
-                print("Invalid arguments")
-                return
-
-            name = parts[1]
-            if (name not in list_cows()) and (name != "jgsbat"):
-                print("Cannot add unknown monster")
-                return
-
-            params = {}
-            i = 2
-
-            try:
-                while i < len(parts):
-                    if parts[i] == "hello":
-                        if ("hello" in params) or (i + 1 >= len(parts)):
-                            raise ValueError
-                        params["hello"] = parts[i + 1]
-                        i += 2
-
-                    elif parts[i] == "hp":
-                        if ("hp" in params) or (i + 1 >= len(parts)):
-                            raise ValueError
-                        params["hp"] = int(parts[i + 1])
-                        i += 2
-
-                    elif parts[i] == "coords":
-                        if ("coords" in params) or (i + 2 >= len(parts)):
-                            raise ValueError
-                        params["coords"] = True
-                        params["x"] = int(parts[i + 1])
-                        params["y"] = int(parts[i + 2])
-                        i += 3
-
-                    else:
+        try:
+            while i < len(parts):
+                if parts[i] == "hello":
+                    if ("hello" in params) or (i + 1 >= len(parts)):
                         raise ValueError
+                    params["hello"] = parts[i + 1]
+                    i += 2
 
-                if not all(k in params for k in ("hello", "hp", "coords", "x", "y")):
+                elif parts[i] == "hp":
+                    if ("hp" in params) or (i + 1 >= len(parts)):
+                        raise ValueError
+                    params["hp"] = int(parts[i + 1])
+                    i += 2
+
+                elif parts[i] == "coords":
+                    if ("coords" in params) or (i + 2 >= len(parts)):
+                        raise ValueError
+                    params["coords"] = True
+                    params["x"] = int(parts[i + 1])
+                    params["y"] = int(parts[i + 2])
+                    i += 3
+
+                else:
                     raise ValueError
 
-                hello = params["hello"]
-                hp = params["hp"]
-                x = params["x"]
-                y = params["y"]
+            if not all(k in params for k in ("hello", "hp", "coords", "x", "y")):
+                raise ValueError
 
-                if not (0 <= x < SIZE and 0 <= y < SIZE):
-                    raise ValueError
-                if hp <= 0:
-                    raise ValueError
+            hello = params["hello"]
+            hp = params["hp"]
+            x = params["x"]
+            y = params["y"]
 
-            except ValueError:
-                print("Invalid arguments")
-                return
+            if not (0 <= x < SIZE and 0 <= y < SIZE):
+                raise ValueError
+            if hp <= 0:
+                raise ValueError
 
-            self.addmon(name, hello, hp, x, y)
+        except ValueError:
+            print("Invalid arguments")
             return
 
-        print("Invalid command")
+        self.game.addmon(name, hello, hp, x, y)
+
+    def do_quit(self, arg: str) -> bool:
+        if arg.strip():
+            print("Invalid arguments")
+            return False
+        return True
 
 
 def main() -> None:
-    print("<<< Welcome to Python-MUD 0.1 >>>")
-    game = Game()
-    for line in sys.stdin:
-        game.process_line(line)
+    Shell().cmdloop()
 
 
 if __name__ == "__main__":
