@@ -50,10 +50,10 @@ class Game:
         if replaced:
             print("Replaced the old monster")
 
-    def attack(self) -> None:
+    def attack(self, target: str) -> None:
         key = (self.player_x, self.player_y)
-        if key not in self.monsters:
-            print("No monster here")
+        if key not in self.monsters or self.monsters[key][0] != target:
+            print(f"No {target} here")
             return
 
         name, hello, hp = self.monsters[key]
@@ -165,10 +165,33 @@ class Shell(cmd.Cmd):
         self.game.addmon(name, hello, hp, x, y)
 
     def do_attack(self, arg: str) -> None:
-        if arg.strip():
+        if not arg.strip():
             print("Invalid arguments")
             return
-        self.game.attack()
+
+        try:
+            parts = shlex.split(arg)
+        except ValueError:
+            print("Invalid arguments")
+            return
+
+        if len(parts) != 1:
+            print("Invalid arguments")
+            return
+
+        self.game.attack(parts[0])
+
+    def complete_attack(self, text: str, line: str, begidx: int, endidx: int) -> list[str]:
+        try:
+            parts = shlex.split(line[:begidx])
+        except ValueError:
+            return []
+
+        if len(parts) != 1:
+            return []
+
+        monsters = list_cows() + ["jgsbat"]
+        return [name for name in monsters if name.startswith(text)]
 
     def do_quit(self, arg: str) -> bool:
         if arg.strip():
