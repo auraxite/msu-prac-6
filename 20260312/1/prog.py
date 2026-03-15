@@ -50,6 +50,24 @@ class Game:
         if replaced:
             print("Replaced the old monster")
 
+    def attack(self) -> None:
+        key = (self.player_x, self.player_y)
+        if key not in self.monsters:
+            print("No monster here")
+            return
+
+        name, hello, hp = self.monsters[key]
+        damage = min(10, hp)
+
+        print(f"Attacked {name},  damage {damage} hp")
+        hp -= damage
+        if hp == 0:
+            print(f"{name} died")
+            del self.monsters[key]
+        else:
+            self.monsters[key] = (name, hello, hp)
+            print(f"{name} now has {hp}")
+
 
 class Shell(cmd.Cmd):
     intro = "<<< Welcome to Python-MUD 0.1 >>>"
@@ -145,6 +163,12 @@ class Shell(cmd.Cmd):
             return
 
         self.game.addmon(name, hello, hp, x, y)
+
+    def do_attack(self, arg: str) -> None:
+        if arg.strip():
+            print("Invalid arguments")
+            return
+        self.game.attack()
 
     def do_quit(self, arg: str) -> bool:
         if arg.strip():
