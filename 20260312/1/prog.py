@@ -50,14 +50,14 @@ class Game:
         if replaced:
             print("Replaced the old monster")
 
-    def attack(self) -> None:
+    def attack(self, damage: int) -> None:
         key = (self.player_x, self.player_y)
         if key not in self.monsters:
             print("No monster here")
             return
 
         name, hello, hp = self.monsters[key]
-        damage = min(10, hp)
+        damage = min(damage, hp)
 
         print(f"Attacked {name},  damage {damage} hp")
         hp -= damage
@@ -76,6 +76,11 @@ class Shell(cmd.Cmd):
     def __init__(self) -> None:
         super().__init__()
         self.game = Game()
+        self.weapons = {
+            "sword": 10,
+            "spear": 15,
+            "axe": 20,
+        }
 
     def do_up(self, arg: str) -> None:
         if arg.strip():
@@ -165,10 +170,38 @@ class Shell(cmd.Cmd):
         self.game.addmon(name, hello, hp, x, y)
 
     def do_attack(self, arg: str) -> None:
+        weapon = "sword"
+
         if arg.strip():
-            print("Invalid arguments")
+            try:
+                parts = shlex.split(arg)
+            except ValueError:
+                print("Invalid arguments")
+                return
+            
+            if parts[0] != "with" or len(parts) != 2:
+                print("Invalid arguments")
+                return
+            weapon = parts[1]
+
+        if weapon not in self.weapons:
+            print("Unknown weapon")
             return
-        self.game.attack()
+
+        self.game.attack(self.weapons[weapon])
+
+    def complete_attack(self, text: str, line: str, begidx: int, endidx: int) -> list[str]:
+        try:
+            parts = shlex.split(line[:begidx])
+        except ValueError:
+            return []
+
+        if len(parts) == 2 and parts[1] == "with":
+            options = list(self.weapons.keys())
+        else:
+            return []
+
+        return [x for x in options if x.startswith(text)]
 
     def do_quit(self, arg: str) -> bool:
         if arg.strip():
