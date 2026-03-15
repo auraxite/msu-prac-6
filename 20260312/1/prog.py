@@ -50,10 +50,10 @@ class Game:
         if replaced:
             print("Replaced the old monster")
 
-    def attack(self, damage: int) -> None:
+    def attack(self, damage: int, target: str) -> None:
         key = (self.player_x, self.player_y)
-        if key not in self.monsters:
-            print("No monster here")
+        if key not in self.monsters or self.monsters[key][0] != target:
+            print(f"No {target} here")
             return
 
         name, hello, hp = self.monsters[key]
@@ -76,11 +76,11 @@ class Shell(cmd.Cmd):
     def __init__(self) -> None:
         super().__init__()
         self.game = Game()
-        self.weapons = {
-            "sword": 10,
-            "spear": 15,
-            "axe": 20,
-        }
+	self.weapons = {
+	    "sword": 10,
+	    "spear": 15,
+	    "axe": 20,
+	}
 
     def do_up(self, arg: str) -> None:
         if arg.strip():
@@ -170,33 +170,46 @@ class Shell(cmd.Cmd):
         self.game.addmon(name, hello, hp, x, y)
 
     def do_attack(self, arg: str) -> None:
-        weapon = "sword"
+		if not arg.strip():
+			print("Invalid arguments")
+			return
 
-        if arg.strip():
-            try:
-                parts = shlex.split(arg)
-            except ValueError:
-                print("Invalid arguments")
-                return
-            
-            if parts[0] != "with" or len(parts) != 2:
-                print("Invalid arguments")
-                return
-            weapon = parts[1]
+		try:
+			parts = shlex.split(arg)
+		except ValueError:
+			print("Invalid arguments")
+			return
 
-        if weapon not in self.weapons:
-            print("Unknown weapon")
-            return
+		target = parts[0]
+		weapon = "sword"
 
-        self.game.attack(self.weapons[weapon])
+		if len(parts) == 1:
+			pass
+		elif len(parts) == 3 and parts[1] == "with":
+			weapon = parts[2]
+		else:
+			print("Invalid arguments")
+			return
 
-    def complete_attack(self, text: str, line: str, begidx: int, endidx: int) -> list[str]:
+		if weapon not in self.weapons:
+			print("Unknown weapon")
+			return
+
+		self.game.attack(target, self.weapons[weapon])
+
+	def complete_attack(self, text: str, line: str, begidx: int, endidx: int) -> list[str]:
         try:
             parts = shlex.split(line[:begidx])
         except ValueError:
             return []
 
-        if len(parts) == 2 and parts[1] == "with":
+        monsters = list_cows() + ["jgsbat"]
+
+        if len(parts) == 1:
+            options = monsters
+        elif len(parts) == 2:
+            options = ["with"]
+        elif len(parts) == 3 and parts[2] == "with":
             options = list(self.weapons.keys())
         else:
             return []
