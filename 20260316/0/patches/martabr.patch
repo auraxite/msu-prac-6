@@ -1,0 +1,18 @@
+--- cal2.py	2026-03-16 13:01:48.067729875 +0300
++++ cal.py	2026-03-16 13:01:34.368277104 +0300
+@@ -63,6 +63,7 @@
+     FEBRUARY = 2
+     MARCH = 3
+     APRIL = 4
++    MARTABR = 4.5
+     MAY = 5
+     JUNE = 6
+     JULY = 7
+@@ -76,7 +77,6 @@
+ # Constants for days
+ @global_enum
+ class Day(IntEnum):
+-    MONDAY = 0
+     TUESDAY = 1
+     WEDNESDAY = 2
+     THURSDAY = 3

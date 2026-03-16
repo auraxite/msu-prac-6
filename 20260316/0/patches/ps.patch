@@ -1,0 +1,109 @@
+--- ps21	2026-03-16 13:09:24.303257505 +0300
++++ ps22	2026-03-16 13:09:28.809299827 +0300
+@@ -149,14 +149,14 @@
+ root         164       2  0 12:54 ?        00:00:00 [watchdogd]
+ root         165       2  0 12:54 ?        00:00:00 [kworker/7:1-events]
+ root         166       2  0 12:54 ?        00:00:00 [kworker/R-quota_events_unbound]
+-root         167       2  0 12:54 ?        00:00:00 [kworker/12:1H-i915_cleanup]
++root         167       2  0 12:54 ?        00:00:00 [kworker/12:1H-kblockd]
+ root         168       2  0 12:54 ?        00:00:00 [kswapd0]
+ root         169       2  0 12:54 ?        00:00:00 [ecryptfs-kthread]
+ root         170       2  0 12:54 ?        00:00:00 [kworker/R-kthrotld]
+ root         171       2  0 12:54 ?        00:00:00 [irq/125-pciehp]
+ root         172       2  0 12:54 ?        00:00:00 [kworker/R-acpi_thermal_pm]
+ root         173       2  0 12:54 ?        00:00:00 [kworker/u80:3-events_unbound]
+-root         176       2  0 12:54 ?        00:00:00 [kworker/3:1-events]
++root         176       2  0 12:54 ?        00:00:00 [kworker/3:1-mm_percpu_wq]
+ root         177       2  0 12:54 ?        00:00:00 [hwrng]
+ root         178       2  0 12:54 ?        00:00:00 [kworker/R-hfi-updates]
+ root         179       2  0 12:54 ?        00:00:00 [kworker/8:1-events]
+@@ -165,11 +165,11 @@
+ root         182       2  0 12:54 ?        00:00:00 [kworker/R-ipv6_addrconf]
+ root         183       2  0 12:54 ?        00:00:00 [kworker/R-kstrp]
+ root         184       2  0 12:54 ?        00:00:00 [kworker/4:1-events]
+-root         185       2  0 12:54 ?        00:00:00 [kworker/14:1-mm_percpu_wq]
++root         185       2  0 12:54 ?        00:00:00 [kworker/14:1-events]
+ root         186       2  0 12:54 ?        00:00:00 [kworker/15:1-events]
+ root         187       2  0 12:54 ?        00:00:00 [kworker/5:1-mm_percpu_wq]
+ root         188       2  0 12:54 ?        00:00:00 [kworker/11:1-mm_percpu_wq]
+-root         189       2  0 12:54 ?        00:00:00 [kworker/18:1-mm_percpu_wq]
++root         189       2  0 12:54 ?        00:00:00 [kworker/18:1-events]
+ root         202       2  0 12:54 ?        00:00:00 [kworker/12:2-events]
+ root         203       2  0 12:54 ?        00:00:00 [kworker/R-charger_manager]
+ root         204       2  0 12:54 ?        00:00:00 [kworker/0:1H-i915_cleanup]
+@@ -187,7 +187,7 @@
+ root         285       2  0 12:54 ?        00:00:00 [kworker/7:1H-kblockd]
+ root         287       2  0 12:54 ?        00:00:00 [kworker/9:1H-i915_cleanup]
+ root         292       2  0 12:54 ?        00:00:00 [kworker/10:1H-kblockd]
+-root         294       2  0 12:54 ?        00:00:00 [kworker/15:1H-i915_cleanup]
++root         294       2  0 12:54 ?        00:00:00 [kworker/15:1H-kblockd]
+ root         308       2  0 12:54 ?        00:00:00 [kworker/6:1H-events_highpri]
+ root         310       2  0 12:54 ?        00:00:00 [kworker/1:2-mm_percpu_wq]
+ root         333       2  0 12:54 ?        00:00:00 [kworker/R-nvme-wq]
+@@ -207,13 +207,13 @@
+ root         394       2  0 12:54 ?        00:00:00 [kworker/6:2-events]
+ root         413       2  0 12:54 ?        00:00:00 [jbd2/nvme1n1p4-8]
+ root         414       2  0 12:54 ?        00:00:00 [kworker/R-ext4-rsv-conversion]
+-root         438       2  0 12:54 ?        00:00:00 [kworker/2:2-events]
++root         438       2  0 12:54 ?        00:00:00 [kworker/2:2-mm_percpu_wq]
+ root         473       1  0 12:54 ?        00:00:00 /usr/lib/systemd/systemd-journald
+ systemd+     509       1  0 12:54 ?        00:00:00 /usr/lib/systemd/systemd-timesyncd
+ root         512       1  0 12:54 ?        00:00:00 /usr/lib/systemd/systemd-udevd
+ root         513       2  0 12:54 ?        00:00:00 [kworker/5:2-cgroup_free]
+ systemd+     542       1  0 12:54 ?        00:00:00 /usr/lib/systemd/systemd-resolved
+-root         543       2  0 12:54 ?        00:00:00 [kworker/17:2-mm_percpu_wq]
++root         543       2  0 12:54 ?        00:00:00 [kworker/17:2-events]
+ root         547       2  0 12:54 ?        00:00:00 [psimon]
+ root         651       2  0 12:54 ?        00:00:00 [kworker/13:2-cgroup_bpf_destroy]
+ root         655       2  0 12:54 ?        00:00:00 [kworker/16:2-events]
+@@ -251,14 +251,14 @@
+ root         917       2  0 12:54 ?        00:00:00 [nv_queue]
+ root         919       2  0 12:54 ?        00:00:00 [nv_open_q]
+ root         960       2  0 12:54 ?        00:00:00 [kworker/7:2-events]
+-root         962       2  0 12:54 ?        00:00:00 [kworker/10:2-events]
++root         962       2  0 12:54 ?        00:00:00 [kworker/10:2-mm_percpu_wq]
+ root        1111       2  0 12:54 ?        00:00:00 [nvidia-modeset/kthread_q]
+ root        1112       2  0 12:54 ?        00:00:00 [nvidia-modeset/deferred_close_kthread_q]
+ root        1114       2  0 12:54 ?        00:00:00 [irq/231-nvidia]
+ root        1115       2  0 12:54 ?        00:00:00 [nvidia]
+ root        1116       2  0 12:54 ?        00:00:00 [nv_queue]
+ root        1167       1  0 12:54 ?        00:00:00 /usr/libexec/accounts-daemon
+-avahi       1170       1  2 12:54 ?        00:00:17 avahi-daemon: running [AuraFlow.local]
++avahi       1170       1  2 12:54 ?        00:00:18 avahi-daemon: running [AuraFlow.local]
+ root        1171       1  0 12:54 ?        00:00:00 /usr/libexec/bluetooth/bluetoothd
+ root        1172       1  0 12:54 ?        00:00:00 /usr/sbin/cron -f -P
+ message+    1173       1  0 12:54 ?        00:00:00 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+@@ -367,8 +367,8 @@
+ user        5234    5231  0 12:56 ?        00:00:00 /snap/code/228/usr/share/code/code --type=zygote --no-sandbox
+ user        5248    2971  0 12:56 ?        00:00:00 /snap/code/228/usr/share/code/chrome_crashpad_handler --monitor-self-annotation=ptype=crashpad-handler --no-rate-limit --database=/home/user/.config/Code/Crashpad --url=appcenter://code?aid=fba07a4d-84bd-4fc8-a125-9640fc8ce171&uid=c06d0d0e-e8e2-427a-968d-a9c517b68d1f&iid=c06d0d0e-e8e2-427a-968d-a9c517b68d1f&sid=c06d0d0e-e8e2-427a-968d-a9c517b68d1f --annotation=_companyName=Microsoft --annotation=_productName=VSCode --annotation=_version=1.110.1 --annotation=lsb-release=Ubuntu 25.10 --annotation=plat=Linux --annotation=prod=Electron --annotation=ver=39.6.0 --initial-client-fd=48 --shared-client-connection
+ user        5291    5231  0 12:56 ?        00:00:00 /proc/self/exe --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --no-sandbox --crashpad-handler-pid=5248 --enable-crash-reporter=fb77b5dc-944c-4946-815d-844f207ba95d,no_channel --user-data-dir=/home/user/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,5560105481276805184,7066394151266271236,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708989122997041
+-user        5334    5234 12 12:56 ?        00:01:36 /snap/code/228/usr/share/code/code --type=zygote --no-sandbox
+-user        5380    5231 23 12:56 ?        00:02:57 /proc/self/exe --type=gpu-process --disable-gpu-sandbox --no-sandbox --ozone-platform=x11 --crashpad-handler-pid=5248 --enable-crash-reporter=fb77b5dc-944c-4946-815d-844f207ba95d,no_channel --user-data-dir=/home/user/.config/Code --gpu-preferences=UAAAAAAAAAAgAAAEAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAABgAAAAAAAAAAQAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA --use-gl=angle --use-angle=swiftshader-webgl --shared-files --field-trial-handle=3,i,5560105481276805184,7066394151266271236,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708994745248135
++user        5334    5234 12 12:56 ?        00:01:37 /snap/code/228/usr/share/code/code --type=zygote --no-sandbox
++user        5380    5231 23 12:56 ?        00:02:59 /proc/self/exe --type=gpu-process --disable-gpu-sandbox --no-sandbox --ozone-platform=x11 --crashpad-handler-pid=5248 --enable-crash-reporter=fb77b5dc-944c-4946-815d-844f207ba95d,no_channel --user-data-dir=/home/user/.config/Code --gpu-preferences=UAAAAAAAAAAgAAAEAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAABgAAAAAAAAAAQAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA --use-gl=angle --use-angle=swiftshader-webgl --shared-files --field-trial-handle=3,i,5560105481276805184,7066394151266271236,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708994745248135
+ user        5495    5231  0 12:56 ?        00:00:02 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --no-sandbox --crashpad-handler-pid=5248 --enable-crash-reporter=fb77b5dc-944c-4946-815d-844f207ba95d,no_channel --user-data-dir=/home/user/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,5560105481276805184,7066394151266271236,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708995682289984
+ user        5523    5231  0 12:56 ?        00:00:05 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --no-sandbox --crashpad-handler-pid=5248 --enable-crash-reporter=fb77b5dc-944c-4946-815d-844f207ba95d,no_channel --user-data-dir=/home/user/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,5560105481276805184,7066394151266271236,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708997556373682
+ user        5769    2971  0 12:56 ?        00:00:00 /usr/bin/kwalletd6
+@@ -387,7 +387,7 @@
+ root        8648       2  0 13:04 ?        00:00:00 [kworker/14:0-mm_percpu_wq]
+ root        8702       2  0 13:05 ?        00:00:00 [kworker/2:0]
+ root        8840       2  0 13:05 ?        00:00:00 [kworker/0:2-events]
+-root        8841       2  0 13:05 ?        00:00:00 [kworker/4:0-events]
++root        8841       2  0 13:05 ?        00:00:00 [kworker/4:0-mm_percpu_wq]
+ user        8903    2971  0 13:06 ?        00:00:00 /usr/bin/dolphin
+ user        8917    8903  0 13:06 pts/3    00:00:00 /bin/bash
+ user        9011    2971  0 13:06 ?        00:00:00 /lib/x86_64-linux-gnu/libexec/kf6/kioworker /usr/lib/x86_64-linux-gnu/qt6/plugins/kf6/kio/thumbnail.so thumbnail  local:/run/user/1000/dolphinMIFMcc.9.kioworker.socket
+@@ -402,7 +402,9 @@
+ root       10528       2  0 13:07 ?        00:00:00 [kworker/u80:1-events_unbound]
+ root       10545       2  0 13:07 ?        00:00:00 [kworker/12:0-events]
+ root       10546       2  0 13:07 ?        00:00:00 [kworker/7:0-mm_percpu_wq]
+-user       10660    5495  0 13:09 ?        00:00:00 /bin/sh -c "/snap/code/228/usr/share/code/resources/app/out/vs/base/node/cpuUsage.sh" 7118
+-user       10661   10660  0 13:09 ?        00:00:00 /bin/bash /snap/code/228/usr/share/code/resources/app/out/vs/base/node/cpuUsage.sh 7118
+-user       10664   10661  0 13:09 ?        00:00:00 sleep 1
+-user       10666    7118  0 13:09 pts/1    00:00:00 ps -ef
++user       10691    2971 18 13:09 ?        00:00:00 /usr/bin/dolphin
++user       10705   10691  0 13:09 pts/4    00:00:00 /bin/bash
++user       10778    2971  0 13:09 ?        00:00:00 /lib/x86_64-linux-gnu/libexec/kf6/kioworker /usr/lib/x86_64-linux-gnu/qt6/plugins/kf6/kio/tags.so tags  local:/run/user/1000/dolphinhwXKcg.1.kioworker.socket
++user       10780    2971  2 13:09 ?        00:00:00 /lib/x86_64-linux-gnu/libexec/kf6/kioworker /usr/lib/x86_64-linux-gnu/qt6/plugins/kf6/kio/kio_trash.so trash  local:/run/user/1000/dolphinDsiIcw.2.kioworker.socket
++user       10800    2971  3 13:09 ?        00:00:00 /lib/x86_64-linux-gnu/libexec/kf6/kioworker /usr/lib/x86_64-linux-gnu/qt6/plugins/kf6/kio/thumbnail.so thumbnail  local:/run/user/1000/dolphinnHDQNv.6.kioworker.socket
++user       10820    7118  0 13:09 pts/1    00:00:00 ps -ef
