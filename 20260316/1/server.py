@@ -85,36 +85,28 @@ def handle_command(line: str) -> list[str]:
 			return ["ERROR"]
 
 
-def recv_line(conn: socket.socket) -> str:
-	data = b""
-	while not data.endswith(b"\n"):
-		chunk = conn.recv(1)
-		if not chunk:
-			return ""
-		data += chunk
-	return data.decode().strip()
-
-
-def send_response(conn: socket.socket, response: list[str]) -> None:
-	message = "\n".join(response) + "\n\n"
-	conn.sendall(message.encode())
-
-
 def serve() -> None:
-	server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-	server_sock.bind((HOST, PORT))
-	server_sock.listen(1)
+	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_sock:
+		server_sock.bind((HOST, PORT))
+		server_sock.listen(1)
 
-	while True:
-		conn, _addr = server_sock.accept()
-		with conn:
-			while True:
-				line = recv_line(conn)
-				if line == "":
-					break
-				response = handle_command(line)
-				send_response(conn, response)
+		while True:
+			conn, addr = server_sock.accept()
+			with conn:
+				while True:
+					data = b""
+					while not data.endswith(b"\n"):
+						chunk = conn.recv(1)
+						if not chunk:
+							break
+						data += chunk
+					if not data:
+						break
+
+					line = data.decode().strip()
+					response = handle_command(line)
+					message = "\n".join(response) + "\n\n"
+					conn.sendall(message.encode())
 
 
 if __name__ == "__main__":
