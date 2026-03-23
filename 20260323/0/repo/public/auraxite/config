@@ -1,0 +1,7 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = true
+[remote "committer"]
+	url = http://10.4.58.112:8000/bronichev
+	fetch = +refs/heads/*:refs/remotes/committer/*
