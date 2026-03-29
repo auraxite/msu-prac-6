@@ -1,5 +1,5 @@
+import asyncio
 import shlex
-import socket
 
 
 HOST = "127.0.0.1"
@@ -9,8 +9,7 @@ SIZE = 10
 
 class Game:
 	def __init__(self) -> None:
-		self.player_x = 0
-		self.player_y = 0
+		self.players = {} # username -> [x, y]
 		self.monsters = {}  # (x, y) -> (name, hello, hp)
 
 	def wrap_coord(self, n: int) -> int:
@@ -23,11 +22,13 @@ class Game:
 			return name, hello
 		return None
 
-	def move(self, dx: int, dy: int):
-		self.player_x = self.wrap_coord(self.player_x + dx)
-		self.player_y = self.wrap_coord(self.player_y + dy)
-		encounter = self.encounter(self.player_x, self.player_y)
-		return self.player_x, self.player_y, encounter
+	def move(self, username: str, dx: int, dy: int):
+		x, y = self.players[username]
+		x = self.wrap_coord(x + dx)
+		y = self.wrap_coord(y + dy)
+		self.players[username] = [x, y]
+		encounter = self.encounter(x, y)
+		return x, y, encounter
 
 	def addmon(self, name: str, hello: str, hp: int, x: int, y: int):
 		key = (x, y)
@@ -35,8 +36,9 @@ class Game:
 		self.monsters[key] = (name, hello, hp)
 		return replaced
 
-	def attack(self, damage: int, target: str):
-		key = (self.player_x, self.player_y)
+	def attack(self, username: str, damage: int, target: str):
+		x, y = self.players[username]
+		key = (x, y)
 		if key not in self.monsters or self.monsters[key][0] != target:
 			return False, 0, 0
 
@@ -53,61 +55,121 @@ class Game:
 
 
 game = Game()
+clients = {} # username -> writer
 
 
-def handle_command(line: str) -> list[str]:
-	parts = shlex.split(line)
-	
+async def broadcast(line: str):
+    for w in list(clients.values()):
+        try:
+            w.write((line + "\n").encode())
+        except:
+            pass
+
+async def handle_command(username: str, line: str):
+	try:
+		parts = shlex.split(line)
+	except ValueError:
+		return [("one", "ERROR")]
+
 	match parts:
 		case ["move", dx, dy]:
-			x, y, encounter = game.move(int(dx), int(dy))
-			response = [f"MOVE {x} {y}"]
+			x, y, encounter = game.move(username, int(dx), int(dy))
+			res = [("one", f"MOVE {x} {y}")]
 			if encounter is None:
-				response.append("NO_ENCOUNTER")
+				res.append(("one", "NO_ENCOUNTER"))
 			else:
 				name, hello = encounter
-				response.append(shlex.join(["ENCOUNTER", name, hello]))
-			return response
+				res.append(("one", shlex.join(["ENCOUNTER", name, hello])))
+			return res
 
 		case ["addmon", name, hello, hp, x, y]:
-			replaced = game.addmon(name, hello, int(hp), int(x), int(y))
-			return [f"ADDMON {int(replaced)}"]
+			hp, x, y = int(hp), int(x), int(y)
+			replaced = game.addmon(name, hello, hp, x, y)
+			res = [
+				("all", f"{username} added {name} with {hp} hp at ({x},{y})")
+			]
+			if replaced:
+				res.append(("all", "Replaced old monster"))
+			return res
 
 		case ["attack", target, damage]:
-			ok, dealt, hp_left = game.attack(int(damage), target)
+			damage = int(damage)
+			ok, dealt, hp_left = game.attack(username, damage, target)
 			if not ok:
-				return ["NOT_HERE"]
+				return [("one", f"No {target} here")]
 			if hp_left == 0:
-				return [f"KILLED {dealt}"]
-			return [f"ATTACK {dealt} {hp_left}"]
+				return [
+					("all", f"{username} attacked {target} with {dealt}"),
+					("all", f"{target} died"),
+				]
+			return [
+				("all", f"{username} attacked {target} with {dealt}"),
+				("all", f"{target} has {hp_left} hp"),
+			]
 
 		case _:
-			return ["ERROR"]
+			return [("one", "ERROR")]
 
+async def handle_client(reader, writer):
+	username = None
 
-def serve() -> None:
-	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_sock:
-		server_sock.bind((HOST, PORT))
-		server_sock.listen(1)
+	try:
+		data = await reader.readline()
+		if not data:
+			return
+
+		try:
+			parts = shlex.split(data.decode().strip())
+		except ValueError:
+			writer.write(b"ERROR\n")
+			return
+		if len(parts) != 2 or parts[0] != "login":
+			writer.write(b"ERROR\n")
+			return
+
+		username = parts[1]
+
+		if username in game.players:
+			writer.write(b"Username already taken\n")
+			return
+
+		game.players[username] = [0, 0]
+		clients[username] = writer
+
+		await broadcast(f"{username} entered the MUD")
 
 		while True:
-			conn, addr = server_sock.accept()
-			with conn:
-				while True:
-					data = b""
-					while not data.endswith(b"\n"):
-						chunk = conn.recv(1)
-						if not chunk:
-							break
-						data += chunk
-					if not data:
-						break
+			data = await reader.readline()
+			if not data:
+				break
 
-					line = data.decode().strip()
-					response = handle_command(line)
-					message = "\n".join(response) + "\n\n"
-					conn.sendall(message.encode())
+			line = data.decode().strip()
+			response = await handle_command(username, line)
+
+			for scope, msg in response:
+				if scope == "one":
+					writer.write((msg + "\n").encode())
+				else:
+					await broadcast(msg)
+
+	finally:
+		if username:
+			clients.pop(username, None)
+			game.players.pop(username, None)
+			await broadcast(f"{username} left the MUD")
+
+		writer.close()
+		await writer.wait_closed()
+
+
+async def main():
+	server = await asyncio.start_server(handle_client, HOST, PORT)
+
+	print(f"Server has been started on {HOST}:{PORT}")
+
+	async with server:
+		await server.serve_forever()
 
 
 if __name__ == "__main__":
-	serve()
+	asyncio.run(main())
