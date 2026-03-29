@@ -1,0 +1,187 @@
+From 555292c061cb317b637300f7037e9ff40056f582 Mon Sep 17 00:00:00 2001
+From: Kirill <kokibizov@gmail.com>
+Date: Fri, 20 Mar 2026 13:25:50 +0300
+Subject: [PATCH 3/3] client.py attack
+
+---
+ 20260316/1/client.py | 146 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 144 insertions(+), 2 deletions(-)
+
+diff --git a/20260316/1/client.py b/20260316/1/client.py
+index 9619e5b..86e528b 100644
+--- a/20260316/1/client.py
++++ b/20260316/1/client.py
+@@ -2,12 +2,12 @@ import cmd
+ import io
+ import shlex
+ import socket
+-from cowsay import cowsay, read_dot_cow
++from cowsay import cowsay, read_dot_cow, list_cows
+ 
+ 
+ HOST = "127.0.0.1"
+ PORT = 1337
+-
++SIZE = 10
+ JGSBAT = read_dot_cow(io.StringIO(r"""
+     ,_                    _,
+     ) '-._  ,_    _,  _.-' (
+@@ -29,6 +29,11 @@ class Shell(cmd.Cmd):
+         super().__init__()
+         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+         self.sock.connect((HOST, PORT))
++        self.weapons = {
++            "sword": 10,
++            "spear": 15,
++            "axe": 20,
++        }
+ 
+     def request(self, command: str) -> list[str]:
+         self.sock.sendall((command + "\n").encode())
+@@ -93,6 +98,143 @@ class Shell(cmd.Cmd):
+             return
+         self.move(1, 0)
+ 
++    def do_addmon(self, arg: str) -> None:
++        if not arg.strip():
++            print("Invalid arguments")
++            return
++
++        try:
++            parts = shlex.split(arg)
++        except ValueError:
++            print("Invalid arguments")
++            return
++
++        name = parts[0]
++        if (name not in list_cows()) and (name != "jgsbat"):
++            print("Cannot add unknown monster")
++            return
++
++        params = {}
++        i = 1
++
++        try:
++            while i < len(parts):
++                if parts[i] == "hello":
++                    if ("hello" in params) or (i + 1 >= len(parts)):
++                        raise ValueError
++                    params["hello"] = parts[i + 1]
++                    i += 2
++
++                elif parts[i] == "hp":
++                    if ("hp" in params) or (i + 1 >= len(parts)):
++                        raise ValueError
++                    params["hp"] = int(parts[i + 1])
++                    i += 2
++
++                elif parts[i] == "coords":
++                    if ("coords" in params) or (i + 2 >= len(parts)):
++                        raise ValueError
++                    params["coords"] = True
++                    params["x"] = int(parts[i + 1])
++                    params["y"] = int(parts[i + 2])
++                    i += 3
++
++                else:
++                    raise ValueError
++
++            if not all(k in params for k in ("hello", "hp", "coords", "x", "y")):
++                raise ValueError
++
++            hello = params["hello"]
++            hp = params["hp"]
++            x = params["x"]
++            y = params["y"]
++
++            if not (0 <= x < SIZE and 0 <= y < SIZE):
++                raise ValueError
++            if hp <= 0:
++                raise ValueError
++
++        except ValueError:
++            print("Invalid arguments")
++            return
++
++        response = self.request(
++            shlex.join(["addmon", name, hello, str(hp), str(x), str(y)])
++        )
++
++        reply = shlex.split(response[0])
++        replaced = bool(int(reply[1]))
++
++        print(f"Added monster {name} to ({x}, {y}) saying {hello}")
++        if replaced:
++            print("Replaced the old monster")
++
++    def do_attack(self, arg: str) -> None:
++        if not arg.strip():
++            print("Invalid arguments")
++            return
++
++        try:
++            parts = shlex.split(arg)
++        except ValueError:
++            print("Invalid arguments")
++            return
++
++        target = parts[0]
++        weapon = "sword"
++
++        if len(parts) == 1:
++            pass
++        elif len(parts) == 3 and parts[1] == "with":
++            weapon = parts[2]
++        else:
++            print("Invalid arguments")
++            return
++
++        if weapon not in self.weapons:
++            print("Unknown weapon")
++            return
++
++        damage = self.weapons[weapon]
++        response = self.request(shlex.join(["attack", target, str(damage)]))
++        reply = shlex.split(response[0])
++
++        if reply[0] == "NOT_HERE":
++            print(f"No {target} here")
++            return
++
++        if reply[0] == "KILLED":
++            dealt = int(reply[1])
++            print(f"Attacked {target},  damage {dealt} hp")
++            print(f"{target} died")
++            return
++
++        if reply[0] == "ATTACK":
++            dealt = int(reply[1])
++            hp_left = int(reply[2])
++            print(f"Attacked {target},  damage {dealt} hp")
++            print(f"{target} now has {hp_left}")
++
++    def complete_attack(self, text: str, line: str, begidx: int, endidx: int) -> list[str]:
++        try:
++            parts = shlex.split(line[:begidx])
++        except ValueError:
++            return []
++
++        monsters = list_cows() + ["jgsbat"]
++
++        if len(parts) == 1:
++            options = monsters
++        elif len(parts) == 2:
++            options = ["with"]
++        elif len(parts) == 3 and parts[2] == "with":
++            options = list(self.weapons.keys())
++        else:
++            return []
++
++        return [x for x in options if x.startswith(text)]
++
+     def do_quit(self, arg: str) -> bool:
+         if arg.strip():
+             print("Invalid arguments")
+-- 
+2.51.0
+
