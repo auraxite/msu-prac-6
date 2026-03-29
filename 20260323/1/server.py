@@ -92,18 +92,18 @@ async def handle_command(username: str, line: str):
 				res.append(("all", "Replaced old monster"))
 			return res
 
-		case ["attack", target, damage]:
+		case ["attack", target, weapon, damage]:
 			damage = int(damage)
 			ok, dealt, hp_left = game.attack(username, damage, target)
 			if not ok:
 				return [("one", f"No {target} here")]
 			if hp_left == 0:
 				return [
-					("all", f"{username} attacked {target} with {dealt}"),
+					("all", f"{username} attacked {target} with {weapon}, damage {damage} hp"),
 					("all", f"{target} died"),
 				]
 			return [
-				("all", f"{username} attacked {target} with {dealt}"),
+				("all", f"{username} attacked {target} with {weapon}, damage {damage} hp"),
 				("all", f"{target} has {hp_left} hp"),
 			]
 

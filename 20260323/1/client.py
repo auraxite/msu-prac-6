@@ -1,8 +1,11 @@
 import cmd
 import io
+import readline
 import shlex
 import socket
-from cowsay import cowsay, read_dot_cow, list_cows
+import sys
+import threading
+from cowsay import read_dot_cow, list_cows
 
 
 HOST = "127.0.0.1"
@@ -25,7 +28,7 @@ class Shell(cmd.Cmd):
     intro = "<<< Welcome to Python-MUD 0.1 >>>"
     prompt = "(mud) "
 
-    def __init__(self) -> None:
+    def __init__(self, username) -> None:
         super().__init__()
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((HOST, PORT))
@@ -34,45 +37,40 @@ class Shell(cmd.Cmd):
             "spear": 15,
             "axe": 20,
         }
+        self.alive = True
+        self.sock.sendall(shlex.join(["login", sys.argv[1]]).encode() + b"\n")
+        threading.Thread(target=self.reader_loop, daemon=True).start()
 
-    def request(self, command: str) -> list[str]:
+    def reader_loop(self) -> None:
+        while self.alive:
+            try:
+                data = b""
+                while not data.endswith(b"\n"):
+                    chunk = self.sock.recv(1)
+                    if not chunk:
+                        self.alive = False
+                        print("\nDisconnected from server")
+                        return
+                    data += chunk
+
+                line = data.decode().strip()
+                if line == "":
+                    continue
+                current = readline.get_line_buffer()
+                print("\r" + line)
+                print(f"{self.prompt}{current}", end="", flush=True)
+
+            except:
+                self.alive = False
+                return
+            
+    def send_command(self, command: str) -> None:
+        if not self.alive:
+            return
         self.sock.sendall((command + "\n").encode())
-
-        response = []
-        while True:
-            data = b""
-            while not data.endswith(b"\n"):
-                chunk = self.sock.recv(1)
-                if not chunk:
-                    return response
-                data += chunk
-
-            line = data.decode().strip()
-            if line == "":
-                break
-            response.append(line)
-
-        return response
-
-    def encounter(self, name: str, hello: str) -> None:
-        if name == "jgsbat":
-            print(cowsay(hello, cowfile=JGSBAT))
-        else:
-            print(cowsay(hello, cow=name))
-
+        
     def move(self, dx: int, dy: int) -> None:
-        response = self.request(shlex.join(["move", str(dx), str(dy)]))
-
-        move_parts = shlex.split(response[0])
-        x = int(move_parts[1])
-        y = int(move_parts[2])
-        print(f"Moved to ({x}, {y})")
-
-        encounter_parts = shlex.split(response[1])
-        if encounter_parts[0] == "ENCOUNTER":
-            name = encounter_parts[1]
-            hello = encounter_parts[2]
-            self.encounter(name, hello)
+        self.send_command(shlex.join(["move", str(dx), str(dy)]))
 
     def do_up(self, arg: str) -> None:
         if arg.strip():
@@ -159,16 +157,9 @@ class Shell(cmd.Cmd):
             print("Invalid arguments")
             return
 
-        response = self.request(
+        self.send_command(
             shlex.join(["addmon", name, hello, str(hp), str(x), str(y)])
         )
-
-        reply = shlex.split(response[0])
-        replaced = bool(int(reply[1]))
-
-        print(f"Added monster {name} to ({x}, {y}) saying {hello}")
-        if replaced:
-            print("Replaced the old monster")
 
     def do_attack(self, arg: str) -> None:
         if not arg.strip():
@@ -197,24 +188,7 @@ class Shell(cmd.Cmd):
             return
 
         damage = self.weapons[weapon]
-        response = self.request(shlex.join(["attack", target, str(damage)]))
-        reply = shlex.split(response[0])
-
-        if reply[0] == "NOT_HERE":
-            print(f"No {target} here")
-            return
-
-        if reply[0] == "KILLED":
-            dealt = int(reply[1])
-            print(f"Attacked {target},  damage {dealt} hp")
-            print(f"{target} died")
-            return
-
-        if reply[0] == "ATTACK":
-            dealt = int(reply[1])
-            hp_left = int(reply[2])
-            print(f"Attacked {target},  damage {dealt} hp")
-            print(f"{target} now has {hp_left}")
+        self.send_command(shlex.join(["attack", target, weapon, str(damage)]))
 
     def complete_attack(self, text: str, line: str, begidx: int, endidx: int) -> list[str]:
         try:
@@ -239,13 +213,16 @@ class Shell(cmd.Cmd):
         if arg.strip():
             print("Invalid arguments")
             return False
+        self.alive = False
         self.sock.close()
         return True
-
-
-def main() -> None:
-    Shell().cmdloop()
+    
+    do_EOF = do_quit
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) != 2:
+        print("Usage: python client.py <<username>>")
+        raise SystemExit(1)
+
+    Shell(sys.argv[1]).cmdloop()
