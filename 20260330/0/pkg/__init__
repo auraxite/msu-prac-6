@@ -1,0 +1,3 @@
+print("importing", __file__)
+
+VAR = 100500

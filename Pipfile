@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 python-cowsay = "*"
+yapf = "*"
+black = "*"
 
 [dev-packages]
 
