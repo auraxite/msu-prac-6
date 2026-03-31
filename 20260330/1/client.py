@@ -219,6 +219,12 @@ class Shell(cmd.Cmd):
     
     do_EOF = do_quit
 
+    def do_sayall(self, arg: str) -> None:
+        if not arg.strip():
+            print("Invalid arguments")
+            return
+        self.send_command(shlex.join(["sayall", arg]))
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

@@ -107,6 +107,13 @@ async def handle_command(username: str, line: str):
 				("all", f"{target} has {hp_left} hp"),
 			]
 
+		case ["sayall", *message_parts]:
+			if not message_parts:
+				return [("one", "ERROR")]
+
+			message = " ".join(message_parts)
+			return [("all", f"{username}: {message}")]
+
 		case _:
 			return [("one", "ERROR")]
 
