@@ -1,17 +1,15 @@
 import cmd
+import cowsay
 import io
 import readline
 import shlex
 import socket
 import sys
 import threading
-from cowsay import read_dot_cow, list_cows
 
+from mood.common import HOST, PORT, SIZE
 
-HOST = "127.0.0.1"
-PORT = 1337
-SIZE = 10
-JGSBAT = read_dot_cow(io.StringIO(r"""
+JGSBAT = cowsay.read_dot_cow(io.StringIO(r"""
     ,_                    _,
     ) '-._  ,_    _,  _.-' (
     )  _.-'.|\\--//|.'-._  (
@@ -38,7 +36,7 @@ class Shell(cmd.Cmd):
             "axe": 20,
         }
         self.alive = True
-        self.sock.sendall(shlex.join(["login", sys.argv[1]]).encode() + b"\n")
+        self.sock.sendall(shlex.join(["login", username]).encode() + b"\n")
         threading.Thread(target=self.reader_loop, daemon=True).start()
 
     def reader_loop(self) -> None:
@@ -108,7 +106,7 @@ class Shell(cmd.Cmd):
             return
 
         name = parts[0]
-        if (name not in list_cows()) and (name != "jgsbat"):
+        if (name not in cowsay.list_cows()) and (name != "jgsbat"):
             print("Cannot add unknown monster")
             return
 
@@ -196,7 +194,7 @@ class Shell(cmd.Cmd):
         except ValueError:
             return []
 
-        monsters = list_cows() + ["jgsbat"]
+        monsters = cowsay.list_cows() + ["jgsbat"]
 
         if len(parts) == 1:
             options = monsters
@@ -224,11 +222,3 @@ class Shell(cmd.Cmd):
             print("Invalid arguments")
             return
         self.send_command(shlex.join(["sayall", arg]))
-
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python client.py <<username>>")
-        raise SystemExit(1)
-
-    Shell(sys.argv[1]).cmdloop()
