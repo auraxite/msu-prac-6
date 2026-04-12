@@ -1,4 +1,7 @@
+"""Command parsing for the MUD"""
+
 import shlex
+
 
 async def handle_command(game, username: str, line: str):
 	try:
@@ -34,11 +37,11 @@ async def handle_command(game, username: str, line: str):
 				return [("one", f"No {target} here")]
 			if hp_left == 0:
 				return [
-					("all", f"{username} attacked {target} with {weapon}, damage {damage} hp"),
+					("all", f"{username} attacked {target} with {weapon}, damage {dealt} hp"),
 					("all", f"{target} died"),
 				]
 			return [
-				("all", f"{username} attacked {target} with {weapon}, damage {damage} hp"),
+				("all", f"{username} attacked {target} with {weapon}, damage {dealt} hp"),
 				("all", f"{target} has {hp_left} hp"),
 			]
 
