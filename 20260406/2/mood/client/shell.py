@@ -5,6 +5,7 @@ import readline
 import shlex
 import socket
 import threading
+import time
 
 from mood.common.const import HOST, PORT, SIZE
 
@@ -83,6 +84,18 @@ class Shell(cmd.Cmd):
 		if not self.alive:
 			return
 		self.sock.sendall((command + "\n").encode())
+
+	def run_file(self, filename: str) -> None:
+		with open(filename, encoding="utf-8") as mood_file:
+			for line in mood_file:
+				command = line.strip()
+				if not command:
+					continue
+				if command == "quit":
+					self.do_quit("")
+					return
+				self.send_command(command)
+				time.sleep(1)
 
 	def move(self, dx: int, dy: int) -> None:
 		self.send_command(shlex.join(["move", str(dx), str(dy)]))
