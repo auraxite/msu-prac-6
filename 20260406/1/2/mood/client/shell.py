@@ -39,6 +39,22 @@ class Shell(cmd.Cmd):
 		self.sock.sendall(shlex.join(["login", username]).encode() + b"\n")
 		threading.Thread(target=self.reader_loop, daemon=True).start()
 
+	def encounter(self, name: str, hello: str) -> str:
+		if name == "jgsbat":
+			return cowsay.cowsay(hello, cowfile=JGSBAT)
+		return cowsay.cowsay(hello, cow=name)
+
+	def format_message(self, line: str) -> str:
+		try:
+			parts = shlex.split(line)
+		except ValueError:
+			return line
+
+		if len(parts) == 3 and parts[0] == "ENCOUNTER":
+			return self.encounter(parts[1], parts[2])
+
+		return line
+
 	def reader_loop(self) -> None:
 		while self.alive:
 			try:
@@ -54,6 +70,7 @@ class Shell(cmd.Cmd):
 				line = data.decode().strip()
 				if line == "":
 					continue
+				line = self.format_message(line)
 				current = readline.get_line_buffer()
 				print("\r" + line)
 				print(f"{self.prompt}{current}", end="", flush=True)
