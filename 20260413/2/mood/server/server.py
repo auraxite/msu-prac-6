@@ -4,17 +4,35 @@ import asyncio
 import shlex
 
 from .game import Game
+from .i18n import RU, catalog, hp_phrase, tr
 from .protocol import handle_command
 from mood.common.const import HOST, PORT, WAITING_TIME
 
+
+def expand(locale: str, part: str | tuple[str, dict]) -> str:
+	if isinstance(part, str):
+		return part
+	msgid, kw = part
+	kw = dict(kw)
+	d = kw.get("direction")
+	if isinstance(d, str) and d in {"right", "left", "up", "down"}:
+		kw["direction"] = catalog.gettext(f"dir_{d}") if locale == RU else d
+	for key in ("hp", "dmg"):
+		n = kw.get(key)
+		if isinstance(n, int):
+			kw[key] = hp_phrase(locale, n)
+	return tr(locale, msgid, **kw)
+
+
 game = Game()
-clients = {}
+clients_writers = {}
+client_locales: dict[str, str] = {}
 
 
-async def broadcast(line: str):
-	for w in list(clients.values()):
+async def broadcast(part: str | tuple[str, dict]):
+	for username, w in list(clients_writers.items()):
 		try:
-			w.write((line + "\n").encode())
+			w.write((expand(client_locales.get(username, ""), part) + "\n").encode())
 		except OSError:
 			pass
 
@@ -52,9 +70,10 @@ async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
 			return
 
 		game.players[username] = [0, 0]
-		clients[username] = writer
+		clients_writers[username] = writer
+		client_locales[username] = ""
 
-		await broadcast(f"{username} entered the MUD")
+		await broadcast(("%(username)s entered the MUD", {"username": username}))
 
 		while True:
 			data = await reader.readline()
@@ -62,28 +81,30 @@ async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWrit
 				break
 
 			line = data.decode().strip()
-			response = await handle_command(game, username, line)
-
+			response = await handle_command(game, username, line, client_locales)
+			loc = client_locales.get(username, "")
 			for scope, msg in response:
 				if scope == "one":
-					await send_line(writer, msg)
+					await send_line(writer, expand(loc, msg))
 				else:
 					await broadcast(msg)
 
 	finally:
 		if username:
-			clients.pop(username, None)
+			clients_writers.pop(username, None)
+			client_locales.pop(username, None)
 			game.players.pop(username, None)
-			await broadcast(f"{username} left the MUD")
+			await broadcast(("%(username)s left the MUD", {"username": username}))
 
 		writer.close()
 		await writer.wait_closed()
+
 
 async def notify_encounter(usernames: list[str], encounter: tuple[str, str]) -> None:
 	name, hello = encounter
 	message = shlex.join(["ENCOUNTER", name, hello])
 	for username in usernames:
-		writer = clients.get(username)
+		writer = clients_writers.get(username)
 		if writer is not None:
 			await send_line(writer, message)
 
@@ -96,7 +117,7 @@ async def wander_monsters() -> None:
 			continue
 
 		name, direction, usernames, encounter = moved
-		await broadcast(f"{name} moved one cell {direction}")
+		await broadcast(("%(name)s moved one cell %(direction)s", {"name": name, "direction": direction}))
 		if usernames:
 			await notify_encounter(usernames, encounter)
 

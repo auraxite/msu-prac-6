@@ -259,3 +259,11 @@ class Shell(cmd.Cmd):
 			print("Invalid arguments")
 			return
 		self.send_command(shlex.join(["movemonsters", mode]))
+
+	def do_locale(self, arg: str) -> None:
+		try:
+			(locale_name,) = shlex.split(arg)
+		except ValueError:
+			print("Invalid arguments")
+			return
+		self.send_command(shlex.join(["locale", locale_name]))
