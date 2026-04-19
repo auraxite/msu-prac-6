@@ -2,3 +2,5 @@ HOST = "127.0.0.1"
 PORT = 1337
 
 SIZE = 10
+
+WAITING_TIME = 30

@@ -51,6 +51,11 @@ async def handle_command(game, username: str, line: str):
 
 			message = " ".join(message_parts)
 			return [("all", f"{username}: {message}")]
+		
+		case ["movemonsters", "on"]:
+			return [("one", game.set_movemonsters(True))]
+		case ["movemonsters", "off"]:
+			return [("one", game.set_movemonsters(False))]
 
 		case _:
 			return [("one", "ERROR")]

@@ -21,6 +21,7 @@ class Game:
 
 		self.players = {} # username -> [x, y]
 		self.monsters = {} # (x, y) -> (name, hello, hp)
+		self.moving_monsters = True
 
 	def wrap_coord(self, n: int) -> int:
 		'''Обернуть координату'''
@@ -81,9 +82,18 @@ class Game:
 			for username, coords in self.players.items()
 			if coords == [x, y]
 		]
+
+	def set_movemonsters(self, enabled: bool) -> str:
+		'''Включить/выключить режим бродячих монстров'''
+
+		self.moving_monsters = enabled
+		return f"Moving monsters: {'on' if enabled else 'off'}"
 	
 	def move_random_monster(self) -> tuple[str, str, list[str], tuple[str, str]] | None:
 		'''Двигать случайного монстра в случайном направлении, возвращая его имя, направление, игроков в новой клетке и его приветствие'''
+
+		if not self.moving_monsters:
+			return None
 
 		if not self.monsters:
 			return None

@@ -252,3 +252,10 @@ class Shell(cmd.Cmd):
 			print("Invalid arguments")
 			return
 		self.send_command(shlex.join(["sayall", arg]))
+
+	def do_movemonsters(self, arg: str) -> None:
+		mode = arg.strip()
+		if mode not in {"on", "off"}:
+			print("Invalid arguments")
+			return
+		self.send_command(shlex.join(["movemonsters", mode]))

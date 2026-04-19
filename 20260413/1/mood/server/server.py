@@ -5,7 +5,7 @@ import shlex
 
 from .game import Game
 from .protocol import handle_command
-from mood.common.const import HOST, PORT
+from mood.common.const import HOST, PORT, WAITING_TIME
 
 game = Game()
 clients = {}
@@ -90,7 +90,7 @@ async def notify_encounter(usernames: list[str], encounter: tuple[str, str]) -> 
 
 async def wander_monsters() -> None:
 	while True:
-		await asyncio.sleep(30)
+		await asyncio.sleep(WAITING_TIME)
 		moved = game.move_random_monster()
 		if moved is None:
 			continue
