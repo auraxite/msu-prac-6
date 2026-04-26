@@ -122,11 +122,11 @@ async def wander_monsters() -> None:
 			await notify_encounter(usernames, encounter)
 
 
-async def main() -> None:
-	server = await asyncio.start_server(handle_client, HOST, PORT)
+async def main(host: str = HOST, port: int = PORT) -> None:
+	server = await asyncio.start_server(handle_client, host, port)
 	wander_task = asyncio.create_task(wander_monsters())
 
-	print(f"Server has been started on {HOST}:{PORT}")
+	print(f"\nServer has been started on {host}:{port}")
 
 	try:
 		async with server:
@@ -134,3 +134,7 @@ async def main() -> None:
 	finally:
 		wander_task.cancel()
 		await asyncio.gather(wander_task, return_exceptions=True)
+
+
+def serve(host: str = HOST, port: int = PORT) -> None:
+	asyncio.run(main(host, port))
