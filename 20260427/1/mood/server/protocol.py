@@ -1,4 +1,4 @@
-"""Command parsing for the MUD"""
+"""Парсинг комманд"""
 
 import shlex
 

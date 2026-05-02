@@ -1,4 +1,4 @@
-"""Async server for the MUD game"""
+"""Асинхронный сервер"""
 
 import asyncio
 import shlex

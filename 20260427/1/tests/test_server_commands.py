@@ -1,3 +1,5 @@
+"""Тесты для сервера"""
+
 import multiprocessing
 import socket
 import time

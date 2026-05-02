@@ -218,5 +218,7 @@ __marimo__/
 
 *.doctree
 
-docs/_build/
-20260406/1/2/docs/_build
+.doit.db
+**/.doit.db
+
+**/docs/build/

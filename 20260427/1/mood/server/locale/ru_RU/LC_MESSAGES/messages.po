@@ -3,57 +3,60 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: mood 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-02 03:30+0300\n"
 "Language: ru_RU\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-msgid "Set up locale: %(locale_name)s"
-msgstr "Установлена локаль: %(locale_name)s"
-
-msgid "%(username)s entered the MUD"
-msgstr "%(username)s вошёл в MUD"
-
-msgid "%(username)s left the MUD"
-msgstr "%(username)s покинул MUD"
-
-msgid "%(username)s added %(name)s with %(hp)s at (%(x)d,%(y)d)"
-msgstr "%(username)s добавил %(name)s с %(hp)s в точке (%(x)d,%(y)d)"
-
-msgid "Replaced old monster"
-msgstr "Старый монстр заменён"
-
-msgid "No %(target)s here"
-msgstr "Здесь нет %(target)s"
-
-msgid "%(username)s attacked %(target)s with %(weapon)s, damage %(dmg)s"
-msgstr "%(username)s атаковал %(target)s оружием %(weapon)s, урон %(dmg)s"
-
-msgid "%(target)s died"
-msgstr "%(target)s погиб"
-
-msgid "%(target)s has %(hp)s"
-msgstr "У %(target)s осталось %(hp)s"
-
-msgid "%(name)s moved one cell %(direction)s"
-msgstr "%(name)s переместился на одну клетку %(direction)s"
-
-msgid "dir_right"
-msgstr "вправо"
-
-msgid "dir_left"
-msgstr "влево"
-
-msgid "dir_up"
-msgstr "вверх"
-
-msgid "dir_down"
-msgstr "вниз"
-
+#: mood/server/i18n.py:23
 #, python-format
 msgid "%(n)d hp"
 msgid_plural "%(n)d hp"
 msgstr[0] "%(n)d очко здоровья"
 msgstr[1] "%(n)d очка здоровья"
 msgstr[2] "%(n)d очков здоровья"
+
+#~ msgid "Set up locale: %(locale_name)s"
+#~ msgstr "Установлена локаль: %(locale_name)s"
+
+#~ msgid "%(username)s entered the MUD"
+#~ msgstr "%(username)s вошёл в MUD"
+
+#~ msgid "%(username)s left the MUD"
+#~ msgstr "%(username)s покинул MUD"
+
+#~ msgid "%(username)s added %(name)s with %(hp)s at (%(x)d,%(y)d)"
+#~ msgstr "%(username)s добавил %(name)s с %(hp)s в точке (%(x)d,%(y)d)"
+
+#~ msgid "Replaced old monster"
+#~ msgstr "Старый монстр заменён"
+
+#~ msgid "No %(target)s here"
+#~ msgstr "Здесь нет %(target)s"
+
+#~ msgid "%(username)s attacked %(target)s with %(weapon)s, damage %(dmg)s"
+#~ msgstr "%(username)s атаковал %(target)s оружием %(weapon)s, урон %(dmg)s"
+
+#~ msgid "%(target)s died"
+#~ msgstr "%(target)s погиб"
+
+#~ msgid "%(target)s has %(hp)s"
+#~ msgstr "У %(target)s осталось %(hp)s"
+
+#~ msgid "%(name)s moved one cell %(direction)s"
+#~ msgstr "%(name)s переместился на одну клетку %(direction)s"
+
+#~ msgid "dir_right"
+#~ msgstr "вправо"
+
+#~ msgid "dir_left"
+#~ msgstr "влево"
+
+#~ msgid "dir_up"
+#~ msgstr "вверх"
+
+#~ msgid "dir_down"
+#~ msgstr "вниз"
