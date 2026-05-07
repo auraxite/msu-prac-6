@@ -1,26 +1,21 @@
 import cmd
 import cowsay
 import io
+import pathlib
 import readline
 import shlex
 import socket
 import threading
 import time
+import webbrowser
 
 from mood.common.const import HOST, PORT, SIZE
 
 
-JGSBAT = cowsay.read_dot_cow(io.StringIO(r"""
-	,_                    _,
-	) '-._  ,_    _,  _.-' (
-	)  _.-'.|\\--//|.'-._  (
-	 )'   .'\/o\/o\/'.   `(
-	  ) .' . \====/ . '. (
-	   )  / <<    >> \  (
-		'-._/``  ``\_.-'
-  jgs     __\\'--'//__
-		 (((""`  `"")))
-"""))
+with pathlib.Path(__file__).with_name("custom_monsters").joinpath("jgsbat.txt").open(encoding="utf-8") as cowfile:
+	JGSBAT = cowsay.read_dot_cow(cowfile)
+
+DOCS = pathlib.Path(__file__).resolve().parents[2] / "docs" / "build" / "html" / "index.html"
 
 
 class Shell(cmd.Cmd):
@@ -267,3 +262,14 @@ class Shell(cmd.Cmd):
 			print("Invalid arguments")
 			return
 		self.send_command(shlex.join(["locale", locale_name]))
+
+	def do_documentation(self, arg: str) -> None:
+		if arg.strip():
+			print("Invalid arguments")
+			return
+
+		if not DOCS.exists():
+			print("Documentation is not built")
+			return
+
+		webbrowser.open(DOCS.as_uri())

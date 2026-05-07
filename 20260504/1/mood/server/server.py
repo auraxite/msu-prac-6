@@ -134,7 +134,3 @@ async def main(host: str = HOST, port: int = PORT) -> None:
 	finally:
 		wander_task.cancel()
 		await asyncio.gather(wander_task, return_exceptions=True)
-
-
-def serve(host: str = HOST, port: int = PORT) -> None:
-	asyncio.run(main(host, port))

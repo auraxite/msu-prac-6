@@ -5,7 +5,7 @@ import socket
 import time
 import unittest
 
-from mood.server.server import serve
+from mood.server.__main__ import serve
 
 
 HOST = "127.0.0.1"

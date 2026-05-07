@@ -5,20 +5,28 @@ from pathlib import Path
 
 from doit.task import clean_targets
 
-DOIT_CONFIG = {"default_tasks": ["html"]}
+DOIT_CONFIG = {"default_tasks": ["i18n", "test", "html", "sdist", "wheel"]}
 
-DOCS_DIR = Path("docs")
-DOCS_BUILD_DIR = DOCS_DIR / "build"
+BUILD_DIR = Path("build")
+DOCS_BUILD_DIR = Path("docs/build")
+DIST_DIR = Path("dist")
+SDIST_FILE = DIST_DIR / "mood-0.1.tar.gz"
+WHEEL_FILE = DIST_DIR / "mood-0.1-py3-none-any.whl"
+EGG_INFO_DIR = Path("mood.egg-info")
 POT_FILE = Path("mood/server/locale/messages.pot")
 PO_FILE = Path("mood/server/locale/ru_RU/LC_MESSAGES/messages.po")
 MO_FILE = Path("mood/server/locale/ru_RU/LC_MESSAGES/messages.mo")
 
 
-def clean_docs_build() -> None:
-	if DOCS_BUILD_DIR.exists():
-		shutil.rmtree(DOCS_BUILD_DIR)
+def clean_build() -> None:
+	for path in (DOCS_BUILD_DIR, DIST_DIR, BUILD_DIR, EGG_INFO_DIR):
+		if path.exists():
+			shutil.rmtree(path)
+	for path in Path(".").rglob("__pycache__"):
+		if path.is_dir():
+			shutil.rmtree(path)
 
-
+# region i18n
 def task_i18n_pot():
 	py_sources = [str(p) for p in Path("mood").glob("**/*.py")]
 	return {
@@ -30,7 +38,6 @@ def task_i18n_pot():
 		],
 		"file_dep": py_sources,
 		"targets": [str(POT_FILE)],
-		"clean": [clean_targets],
 	}
 
 
@@ -44,7 +51,6 @@ def task_i18n_po():
 		"file_dep": [str(POT_FILE)],
 		"targets": [str(PO_FILE)],
 		"task_dep": ["i18n_pot"],
-		"clean": [clean_targets],
 	}
 
 
@@ -66,21 +72,49 @@ def task_i18n():
 		"actions": [],
 		"task_dep": ["i18n_pot", "i18n_po", "i18n_mo"],
 	}
-
+# endregion
 
 def task_html():
 	return {
 		"actions": ["cd docs && sphinx-build -M html . build"],
-		"file_dep": [str(p) for p in DOCS_DIR.glob("**/*.rst")] + [str(p) for p in Path("mood").glob("**/*.py")],
+		"file_dep": 
+			[str(p) for p in Path("docs").glob("**/*.rst")] + \
+			[str(p) for p in Path("mood").glob("**/*.py")],
 		"targets": [str(DOCS_BUILD_DIR / "html" / "index.html")],
-		"clean": [clean_targets, clean_docs_build],
+		"clean": [clean_targets, clean_build],
 	}
 
 
 def task_test():
 	return {
 		"actions": ["python3 -m unittest discover -s tests -p 'test_*.py' -v"],
-		"file_dep": [str(p) for p in Path("tests").glob("test_*.py")],
+		"file_dep":
+			[str(p) for p in Path("tests").glob("test_*.py")] + \
+			[str(p) for p in Path("mood").glob("**/*.py")],
 		"task_dep": ["i18n"],
 		"clean": [clean_targets],
+	}
+
+
+def task_sdist():
+	return {
+		"actions": ["python3 -m build --sdist"],
+		"file_dep":
+			["pyproject.toml", "dodo.py"] + \
+			[str(p) for p in Path("mood").glob("**/*") if p.is_file()],
+		"targets": [str(SDIST_FILE)],
+		"task_dep": ["html", "i18n"],
+		"clean": [clean_targets, clean_build],
+	}
+
+
+def task_wheel():
+	return {
+		"actions": ["python3 -m build --wheel"],
+		"file_dep":
+			["pyproject.toml", "dodo.py"] + \
+			[str(p) for p in Path("mood").glob("**/*") if p.is_file()],
+		"targets": [str(WHEEL_FILE)],
+		"task_dep": ["html", "i18n"],
+		"clean": [clean_targets, clean_build],
 	}
