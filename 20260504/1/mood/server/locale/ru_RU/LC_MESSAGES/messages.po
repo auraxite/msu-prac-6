@@ -19,44 +19,44 @@ msgstr[0] "%(n)d очко здоровья"
 msgstr[1] "%(n)d очка здоровья"
 msgstr[2] "%(n)d очков здоровья"
 
-#~ msgid "Set up locale: %(locale_name)s"
-#~ msgstr "Установлена локаль: %(locale_name)s"
+msgid "Set up locale: %(locale_name)s"
+msgstr "Установлена локаль: %(locale_name)s"
 
-#~ msgid "%(username)s entered the MUD"
-#~ msgstr "%(username)s вошёл в MUD"
+msgid "%(username)s entered the MUD"
+msgstr "%(username)s вошёл в MUD"
 
-#~ msgid "%(username)s left the MUD"
-#~ msgstr "%(username)s покинул MUD"
+msgid "%(username)s left the MUD"
+msgstr "%(username)s покинул MUD"
 
-#~ msgid "%(username)s added %(name)s with %(hp)s at (%(x)d,%(y)d)"
-#~ msgstr "%(username)s добавил %(name)s с %(hp)s в точке (%(x)d,%(y)d)"
+msgid "%(username)s added %(name)s with %(hp)s at (%(x)d,%(y)d)"
+msgstr "%(username)s добавил %(name)s с %(hp)s в точке (%(x)d,%(y)d)"
 
-#~ msgid "Replaced old monster"
-#~ msgstr "Старый монстр заменён"
+msgid "Replaced old monster"
+msgstr "Старый монстр заменён"
 
-#~ msgid "No %(target)s here"
-#~ msgstr "Здесь нет %(target)s"
+msgid "No %(target)s here"
+msgstr "Здесь нет %(target)s"
 
-#~ msgid "%(username)s attacked %(target)s with %(weapon)s, damage %(dmg)s"
-#~ msgstr "%(username)s атаковал %(target)s оружием %(weapon)s, урон %(dmg)s"
+msgid "%(username)s attacked %(target)s with %(weapon)s, damage %(dmg)s"
+msgstr "%(username)s атаковал %(target)s оружием %(weapon)s, урон %(dmg)s"
 
-#~ msgid "%(target)s died"
-#~ msgstr "%(target)s погиб"
+msgid "%(target)s died"
+msgstr "%(target)s погиб"
 
-#~ msgid "%(target)s has %(hp)s"
-#~ msgstr "У %(target)s осталось %(hp)s"
+msgid "%(target)s has %(hp)s"
+msgstr "У %(target)s осталось %(hp)s"
 
-#~ msgid "%(name)s moved one cell %(direction)s"
-#~ msgstr "%(name)s переместился на одну клетку %(direction)s"
+msgid "%(name)s moved one cell %(direction)s"
+msgstr "%(name)s переместился на одну клетку %(direction)s"
 
-#~ msgid "dir_right"
-#~ msgstr "вправо"
+msgid "dir_right"
+msgstr "вправо"
 
-#~ msgid "dir_left"
-#~ msgstr "влево"
+msgid "dir_left"
+msgstr "влево"
 
-#~ msgid "dir_up"
-#~ msgstr "вверх"
+msgid "dir_up"
+msgstr "вверх"
 
-#~ msgid "dir_down"
-#~ msgstr "вниз"
+msgid "dir_down"
+msgstr "вниз"
