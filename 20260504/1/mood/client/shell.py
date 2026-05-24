@@ -1,6 +1,5 @@
 import cmd
 import cowsay
-import io
 import pathlib
 import readline
 import shlex

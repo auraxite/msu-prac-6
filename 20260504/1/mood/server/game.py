@@ -1,4 +1,4 @@
-"""Состояние и механики MUD"""
+"""Состояние и механики MUD."""
 
 import random
 
@@ -14,23 +14,20 @@ DIRECTIONS = {
 
 
 class Game:
-	'''Состояние игры и её механика'''
+	"""Состояние игры и её механика."""
 
 	def __init__(self) -> None:
-		'''Инициализировать пустую игру'''
-
+		"""Инициализировать пустую игру."""
 		self.players = {} # username -> [x, y]
 		self.monsters = {} # (x, y) -> (name, hello, hp)
 		self.moving_monsters = True
 
 	def wrap_coord(self, n: int) -> int:
-		'''Обернуть координату'''
-
+		"""Обернуть координату."""
 		return n % SIZE
 
 	def encounter(self, x: int, y: int) -> tuple[str, str] | None:
-		'''Проверить, есть ли монстр в клетке'''
-
+		"""Проверить, есть ли монстр в клетке."""
 		key = (x, y)
 		if key in self.monsters:
 			name, hello, hp = self.monsters[key]
@@ -38,8 +35,7 @@ class Game:
 		return None
 
 	def move(self, username: str, dx: int, dy: int) -> tuple[int, int, tuple[str, str] | None]:
-		'''Двигать игрока и возвращать его новые координаты и возможную встречу'''
-
+		"""Двигать игрока. Вернуть его новые координаты и возможную встречу."""
 		x, y = self.players[username]
 		x = self.wrap_coord(x + dx)
 		y = self.wrap_coord(y + dy)
@@ -48,16 +44,14 @@ class Game:
 		return x, y, encounter
 
 	def addmon(self, name: str, hello: str, hp: int, x: int, y: int) -> bool:
-		'''Добавить монстра в клетку, возвращая True, если там уже был монстр'''
-
+		"""Добавить монстра в клетку. Вернуть True, если там уже был монстр."""
 		key = (x, y)
 		replaced = key in self.monsters
 		self.monsters[key] = (name, hello, hp)
 		return replaced
 
 	def attack(self, username: str, damage: int, target: str) -> tuple[bool, int, int]:
-		'''Атаковать монстра в клетке, возвращая (успех, нанесённый урон, оставшееся hp)'''
-
+		"""Атаковать монстра в клетке. Вернуть (успех, нанесённый урон, оставшееся hp)."""
 		x, y = self.players[username]
 		key = (x, y)
 		if key not in self.monsters or self.monsters[key][0] != target:
@@ -75,8 +69,7 @@ class Game:
 			return True, damage, hp
 
 	def players_at(self, x: int, y: int) -> list[str]:
-		'''Вернуть список игроков в клетке'''
-
+		"""Вернуть список игроков в клетке."""
 		return [
 			username
 			for username, coords in self.players.items()
@@ -84,14 +77,12 @@ class Game:
 		]
 
 	def set_movemonsters(self, enabled: bool) -> str:
-		'''Включить/выключить режим бродячих монстров'''
-
+		"""Включить/выключить режим бродячих монстров."""
 		self.moving_monsters = enabled
 		return f"Moving monsters: {'on' if enabled else 'off'}"
-	
-	def move_random_monster(self) -> tuple[str, str, list[str], tuple[str, str]] | None:
-		'''Двигать случайного монстра в случайном направлении, возвращая его имя, направление, игроков в новой клетке и его приветствие'''
 
+	def move_random_monster(self) -> tuple[str, str, list[str], tuple[str, str]] | None:
+		"""Двигать случайного монстра в случайном направлении."""
 		if not self.moving_monsters:
 			return None
 
